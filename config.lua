@@ -2,17 +2,17 @@ Config = Config or {}
 
 -- Config --
 
-Config.StandDeposit = 250
+Config.Bail = 35
 
 Config.MyLevel = 1
 Config.MaxReputation = 200
 
 Config.Locations = {
     ["take"] = {
-        coords = vector4(38.74, -1005.49, 29.47, 264.5),
+        coords = vector4(-1145.19, -1599.14, 4.39, 216.67),
     },
     ["spawn"] = {
-        coords = vector4(38.15, -1001.65, 29.44, 342.5),
+        coords = vector4(-1148.71, -1598.09, 4.39, 121.79),
     },
 }
 
@@ -25,7 +25,7 @@ Config.Stock = {
             [3] = 45,
             [4] = 60,
         },
-        Label = Lang:t("info.label_a"),
+        Label = "Perfect (A)",
         Price = {
             [1] = {
                 min = 8,
@@ -53,7 +53,7 @@ Config.Stock = {
             [3] = 45,
             [4] = 60,
         },
-        Label = Lang:t("info.label_b"),
+        Label = "Rare (B)",
         Price = {
             [1] = {
                 min = 6,
@@ -81,7 +81,7 @@ Config.Stock = {
             [3] = 45,
             [4] = 60,
         },
-        Label = Lang:t('info.label_c'),
+        Label = "Common (C)",
         Price = {
             [1] = {
                 min = 4,

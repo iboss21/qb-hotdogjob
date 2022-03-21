@@ -1,13 +1,17 @@
 local QBCore = exports['qb-core']:GetCoreObject()
-local Bail = {}
 
--- Callbacks
+local Bail = {}
 
 QBCore.Functions.CreateCallback('qb-hotdogjob:server:HasMoney', function(source, cb)
     local Player = QBCore.Functions.GetPlayer(source)
 
-    if Player.PlayerData.money.bank >= Config.StandDeposit then
-        Player.Functions.RemoveMoney('bank', Config.StandDeposit)
+    -- if Player.PlayerData.money.cash >= Config.Bail then
+    --     Player.Functions.RemoveMoney('cash', Config.Bail)
+    --     Bail[Player.PlayerData.citizenid] = true
+    --     cb(true)
+    -- else
+    if Player.PlayerData.money.bank >= Config.Bail then
+        Player.Functions.RemoveMoney('bank', Config.Bail)
         Bail[Player.PlayerData.citizenid] = true
         cb(true)
     else
@@ -20,14 +24,12 @@ QBCore.Functions.CreateCallback('qb-hotdogjob:server:BringBack', function(source
     local Player = QBCore.Functions.GetPlayer(source)
 
     if Bail[Player.PlayerData.citizenid] then
-        Player.Functions.AddMoney('bank', Config.StandDeposit)
+        Player.Functions.AddMoney('bank', Config.Bail)
         cb(true)
     else
         cb(false)
     end
 end)
-
--- Events
 
 RegisterNetEvent('qb-hotdogjob:server:Sell', function(Amount, Price)
     local src = source
@@ -36,10 +38,19 @@ RegisterNetEvent('qb-hotdogjob:server:Sell', function(Amount, Price)
     Player.Functions.AddMoney('cash', tonumber(Amount * Price))
 end)
 
+local Reset = false
+
 RegisterNetEvent('qb-hotdogjob:server:UpdateReputation', function(quality)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local JobReputation = Player.PlayerData.metadata["jobrep"]
+
+    if Reset then
+        JobReputation["hotdog"] = 0
+        Player.Functions.SetMetaData("jobrep", JobReputation)
+        TriggerClientEvent('qb-hotdogjob:client:UpdateReputation', src, JobReputation)
+        return
+    end
 
     if quality == "exotic" then
         if JobReputation["hotdog"] ~= nil and JobReputation["hotdog"] + 3 > Config.MaxReputation then
@@ -82,8 +93,7 @@ RegisterNetEvent('qb-hotdogjob:server:UpdateReputation', function(quality)
     TriggerClientEvent('qb-hotdogjob:client:UpdateReputation', src, JobReputation)
 end)
 
--- Commands
 
-QBCore.Commands.Add("removestand", Lang:t("info.command"), {}, false, function(source, args)
+QBCore.Commands.Add("removestand", "Delete Stand (Admin Only)", {}, false, function(source, args)
     TriggerClientEvent('qb-hotdogjob:staff:DeletStand', source)
 end, 'admin')
